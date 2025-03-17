@@ -18,17 +18,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// Listen for health data updates
 	window.api.receive("health-data", (dataPoints) => {
-		console.log("Received historical data:", dataPoints.length, "points");
+		// console.log("Received historical data:", dataPoints.length, "points");
 		// Initialize with historical data
 		dataPoints.forEach((dataPoint) => {
 			addDataPoint(dataPoint);
 		});
 		updateUI();
-		initializeCharts();
+		// initializeCharts();
+		if (window.initializeCharts) {
+			window.initializeCharts();
+		} else {
+			console.error("initializeCharts not available");
+		}
 	});
 
 	window.api.receive("health-data-update", (dataPoint) => {
-		console.log("Received data update:", dataPoint);
+		// console.log("Received data update:", dataPoint);
 		addDataPoint(dataPoint);
 		updateUI();
 		if (window.updateCharts) {

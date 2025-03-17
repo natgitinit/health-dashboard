@@ -2,7 +2,6 @@
 let charts = {};
 
 function initializeCharts() {
-	// Configure Chart.js defaults
 	Chart.defaults.font.family =
 		"'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
 	Chart.defaults.color = "#7f8c8d";
@@ -100,6 +99,14 @@ function initializeCharts() {
 	);
 }
 
+function formatTime(timestamp) {
+	const date = new Date(timestamp);
+	return date.toLocaleTimeString([], {
+		hour: "2-digit",
+		minute: "2-digit",
+	});
+}
+
 function getChartOptions(title) {
 	return {
 		responsive: true,
@@ -115,12 +122,13 @@ function getChartOptions(title) {
 		},
 		scales: {
 			x: {
+				type: "category",
 				display: true,
 				grid: {
 					display: false,
 				},
 				ticks: {
-					maxTicksLimit: 6,
+					maxTicksLimit: 5,
 					maxRotation: 0,
 				},
 			},
@@ -135,31 +143,23 @@ function getChartOptions(title) {
 }
 
 function updateCharts(healthData) {
-	// Update each chart with new data
-	Object.keys(healthData).forEach((metric) => {
-		if (charts[metric] && healthData[metric].length > 0) {
-			// Get formatted timestamps for labels
-			const labels = healthData[metric].map((d) => {
-				const time = d.timestamp;
-				return `${time.getHours()}:${time
-					.getMinutes()
-					.toString()
-					.padStart(2, "0")}:${time.getSeconds().toString().padStart(2, "0")}`;
-			});
+	const timeLabels = healthData.hrv.map((d) => formatTime(d.timestamp));
 
-			// Get values
+	Object.keys(charts).forEach((metric) => {
+		if (charts[metric] && healthData[metric].length > 0) {
 			const values = healthData[metric].map((d) => d.value);
 
-			// Update chart data
-			charts[metric].data.labels = labels;
+			charts[metric].data.labels = timeLabels;
 			charts[metric].data.datasets[0].data = values;
-
-			// Update chart
 			charts[metric].update();
 		}
 	});
 }
 
 // Initialize charts when DOM is loaded
-document.addEventListener("DOMContentLoaded", initializeCharts);
+window.initializeCharts = initializeCharts;
 window.updateCharts = updateCharts;
+
+document.addEventListener("DOMContentLoaded", () => {
+	console.log("Charts.js: DOM ready, waiting for data");
+});
