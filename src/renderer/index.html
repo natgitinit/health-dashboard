@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Health Digital Twin</title>
+		<link rel="stylesheet" href="styles.css" />
+	</head>
+	<body>
+		<div class="dashboard">
+			<header>
+				<h1>Health Digital Twin</h1>
+				<div class="status">
+					<span id="connection-status">Simulating Data</span>
+				</div>
+			</header>
+
+			<main>
+				<div class="vitals-grid">
+					<!-- HRV Panel -->
+					<div class="vital-panel">
+						<div class="vital-header">
+							<h2>Heart Rate Variability</h2>
+							<div class="vital-value" id="hrv-value">-- ms</div>
+						</div>
+						<div class="chart-container">
+							<canvas id="hrv-chart"></canvas>
+						</div>
+						<div class="vital-stats">
+							<div class="stat">
+								<span class="stat-label">Avg</span>
+								<span class="stat-value" id="hrv-avg">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Min</span>
+								<span class="stat-value" id="hrv-min">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Max</span>
+								<span class="stat-value" id="hrv-max">--</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Heart Rate Panel -->
+					<div class="vital-panel">
+						<div class="vital-header">
+							<h2>Heart Rate</h2>
+							<div class="vital-value" id="heart-rate-value">-- bpm</div>
+						</div>
+						<div class="chart-container">
+							<canvas id="heart-rate-chart"></canvas>
+						</div>
+						<div class="vital-stats">
+							<div class="stat">
+								<span class="stat-label">Avg</span>
+								<span class="stat-value" id="heart-rate-avg">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Min</span>
+								<span class="stat-value" id="heart-rate-min">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Max</span>
+								<span class="stat-value" id="heart-rate-max">--</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Temperature Panel -->
+					<div class="vital-panel">
+						<div class="vital-header">
+							<h2>Body Temperature</h2>
+							<div class="vital-value" id="temperature-value">-- °C</div>
+						</div>
+						<div class="chart-container">
+							<canvas id="temperature-chart"></canvas>
+						</div>
+						<div class="vital-stats">
+							<div class="stat">
+								<span class="stat-label">Avg</span>
+								<span class="stat-value" id="temperature-avg">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Min</span>
+								<span class="stat-value" id="temperature-min">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Max</span>
+								<span class="stat-value" id="temperature-max">--</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- Blood Oxygen Panel -->
+					<div class="vital-panel">
+						<div class="vital-header">
+							<h2>Blood Oxygen</h2>
+							<div class="vital-value" id="blood-oxygen-value">-- %</div>
+						</div>
+						<div class="chart-container">
+							<canvas id="blood-oxygen-chart"></canvas>
+						</div>
+						<div class="vital-stats">
+							<div class="stat">
+								<span class="stat-label">Avg</span>
+								<span class="stat-value" id="blood-oxygen-avg">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Min</span>
+								<span class="stat-value" id="blood-oxygen-min">--</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">Max</span>
+								<span class="stat-value" id="blood-oxygen-max">--</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="insights-panel">
+					<h2>Health Insights</h2>
+					<div class="insight-cards" id="insights-container">
+						<!-- Dynamically populated with insights -->
+					</div>
+				</div>
+			</main>
+		</div>
+
+		<script src="dashboard.js"></script>
+		<script src="charts.js"></script>
+	</body>
+</html>
