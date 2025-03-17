@@ -1,5 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
+const vectorDB = require("./src/data/vector-db");
+const { createSimpleEmbedding } = require("./src/data/health-embeddings");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -17,6 +19,8 @@ const createWindow = () => {
 			preload: path.join(__dirname, "preload.js"),
 			contextIsolation: true,
 			nodeIntegration: false,
+			contextIsolation: true,
+			worldSafeExecuteJavaScript: true,
 		},
 	});
 
@@ -33,8 +37,10 @@ const createWindow = () => {
 };
 
 // This method will be called when Electron has finished initialization.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
 	createWindow();
+
+	await vectorDB.initialize();
 
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) {
@@ -62,9 +68,26 @@ function setupMockDataGeneration() {
 		const initialData = generateHistoricalData();
 		mainWindow.webContents.send("health-data", initialData);
 
+		// Store historical data in Qdrant
+		storeHistoricalData(initialData);
+
 		// Send updates every second
 		mockDataInterval = setInterval(() => {
 			const dataPoint = generateDataPoint();
+
+			// Calculate trends (needed for embedding)
+			if (lastDataPoint) {
+				dataPoint.hrv_trend = dataPoint.hrv - lastDataPoint.hrv;
+				dataPoint.hr_trend = dataPoint.heart_rate - lastDataPoint.heart_rate;
+			} else {
+				dataPoint.hrv_trend = 0;
+				dataPoint.hr_trend = 0;
+			}
+
+			// Create embedding and store in vector database
+			const embedding = createSimpleEmbedding(dataPoint);
+			vectorDB.storeHealthVector(dataPoint, embedding);
+
 			mainWindow.webContents.send("health-data-update", dataPoint);
 		}, 1000);
 	});
@@ -98,6 +121,26 @@ function generateHistoricalData() {
 	}
 
 	return data;
+}
+
+// Store initial historical data in vector database
+async function storeHistoricalData(dataPoints) {
+	for (let i = 0; i < dataPoints.length; i++) {
+		const dataPoint = dataPoints[i];
+
+		// Calculate trends
+		if (i > 0) {
+			dataPoint.hrv_trend = dataPoint.hrv - dataPoints[i - 1].hrv;
+			dataPoint.hr_trend = dataPoint.heart_rate - dataPoints[i - 1].heart_rate;
+		} else {
+			dataPoint.hrv_trend = 0;
+			dataPoint.hr_trend = 0;
+		}
+
+		// Create embedding and store
+		const embedding = createSimpleEmbedding(dataPoint);
+		await vectorDB.storeHealthVector(dataPoint, embedding);
+	}
 }
 
 // Clean up when app is quitting

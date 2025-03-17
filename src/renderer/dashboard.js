@@ -31,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		console.log("Received data update:", dataPoint);
 		addDataPoint(dataPoint);
 		updateUI();
-		updateCharts();
+		if (window.updateCharts) {
+			window.updateCharts(healthData);
+		}
 		analyzeData();
 	});
 });
@@ -226,4 +228,12 @@ function analyzeData() {
 	});
 }
 
+function refreshCharts() {
+	if (window.updateCharts) {
+		window.updateCharts(healthData);
+	}
+}
+
 // Charts will be initialized and updated by charts.js
+window.healthData = healthData;
+setTimeout(refreshCharts, 500);

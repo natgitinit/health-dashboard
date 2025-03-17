@@ -17,6 +17,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"@qdrant/js-client-rest": "^1.13.0",
+		"chart.js": "^4.4.8",
 		"electron-squirrel-startup": "^1.0.1"
 	},
 	"devDependencies": {
